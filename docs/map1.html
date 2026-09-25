@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Norfolk, Virginia Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@^6.10.0/dist/maplibre-gl.css" />
+    <style>
+        body { margin: 0; }
+        #map { position: absolute; top: 0; right: 0; bottom: 0; left: 0; }
+        #city-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            background-color: white;
+            padding: 3px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="city-label">Norfolk, Virginia</div>
+    <script type="module">
+        /* CUSTOMIZATIONS
+        1. Changed basemap from positron to liberty.
+        2. Changed zoom, pitch, and bearing.
+        3. Added a title/label and styled it with background, padding, and border, and positioned it using 'top' and 'left'.
+        */
+        import * as maplibregl from 'https://unpkg.com/maplibre-gl@^6.10.0/dist/maplibre-gl.mjs';
+
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: 'https://tiles.openfreemap.org/styles/liberty',
+            center: [-76.2858, 36.8507],   // [lng, lat]
+            zoom: 12,
+            pitch: 50,
+            bearing: 20 
+        });
+        window.map = map;
+    </script>
+</body>
+</html>
