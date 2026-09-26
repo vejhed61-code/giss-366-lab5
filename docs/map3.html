@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@^6.10.0/dist/maplibre-gl.css" />
+    <style>
+        body { margin: 0; }
+        #map { position: absolute; top: 0; right: 0; bottom: 0; left: 0; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script type="module">
+        import * as maplibregl from 'https://unpkg.com/maplibre-gl@^6.10.0/dist/maplibre-gl.mjs';
+
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: 'https://tiles.openfreemap.org/styles/positron',
+            center: [-105, 33],   // [lng, lat] -- note the order, opposite of Leaflet's [lat, lng]!
+            zoom: 5,
+            pitch: 0,
+            bearing: 0
+        });
+        window.map = map;   // exposes map to the browser console for debugging
+        map.on('load', function () {
+           map.addSource('usgs-topo', {
+            type: 'raster', 
+            tiles: ['https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}'],
+            tileSize: 256,
+            attribution: 'USGS'
+           }); 
+           map.addLayer({
+            id: 'usgs-topo-layer', 
+            type: 'raster',  
+            source: 'usgs-topo',  
+            paint: {
+                'raster-opacity': 0.6, 
+            }, 
+        });
+            map.addSource('counties', {
+                type: 'geojson', 
+                data: 'data/nm_counties.geojson'
+            });
+            map.addLayer({
+                id: 'county-fill',
+                type: 'fill',
+                source: 'counties',
+                paint: {
+                    'fill-color': '#888888',
+                    'fill-opacity': 0.5,
+                }
+             });   
+             map.addLayer({
+                id: 'county-outline',
+                type: 'line', 
+                source: 'counties', 
+                paint: {
+                    'line-color': '#444444',
+                    'line-width': 1,
+                }
+            });
+            map.addSource('roads', {
+                type: 'geojson',
+                data: 'data/mora_county_roads.geojson'
+            });
+            map.addLayer({
+                id: 'roads-layer',
+                type: 'line',
+                source: 'roads',
+                paint: {
+                    'line-color': '#ff0000',
+                    'line-width': 2
+                }
+            });
+            map.addSource('places', {
+                type: 'geojson',
+                data: 'data/nm_populated_places.geojson'
+            });
+            map.addLayer({
+                id: 'places-layer',
+                type: 'circle',
+                source: 'places',
+                paint: {
+                    'circle-radius': 5,
+                    'circle-color': '#0000ff'
+                }
+            });
+            new maplibregl.Marker()
+            .setLngLat([-106.65, 35.08])
+            .addTo(map);
+        });
+    </script>
+</body>
+</html>
