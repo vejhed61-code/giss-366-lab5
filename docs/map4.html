@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Four Favorite Places In New Mexico</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@^6.10.0/dist/maplibre-gl.css" />
+    <style>
+        body { margin: 0; }
+        #map { position: absolute; top: 0; right: 0; bottom: 0; left: 0; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script type="module">
+        import * as maplibregl from 'https://unpkg.com/maplibre-gl@^6.10.0/dist/maplibre-gl.mjs';
+
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: 'https://tiles.openfreemap.org/styles/positron',
+            center: [-106.65, 34.0],   // [lng, lat] -- note the order, opposite of Leaflet's [lat, lng]!
+            zoom: 6,
+            pitch: 0,
+            bearing: 0
+        });
+        window.map = map;   // exposes map to the browser console for debugging
+        const places = {
+            type: 'FeatureCollection',
+            features: [
+                {
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [-108.28, 32.77]
+                    },
+                    properties: {
+                        name: 'Silver City',
+                        type: 'Town',
+                        elevation: 5895
+                    }
+                },
+                {
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [-106.65, 35.08]
+                    },
+                    properties: {
+                        name: 'Albuquerque',
+                        type: 'City',
+                        elevation: 5312
+                    }
+                },
+                {
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [-106.76, 32.32]
+                    },
+                    properties: {
+                        name: 'Las Cruces',
+                        type: 'City',
+                        elevation: 3900
+                    }
+                },
+                {
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [-106.65, 35.69]
+                    },
+                    properties: {
+                        name: 'Santa Fe',
+                        type: 'City',
+                        elevation: 7199
+                    }
+                }
+            ]
+        };
+        map.on('load', function() {
+            map.addSource('places', {
+                type: 'geojson',
+                data: places
+            });
+            map.addLayer({
+                id: 'places-layer',
+                type: 'circle',
+                source: 'places',
+                paint: {
+                    'circle-radius': 5,
+                    'circle-color': '#ff0000'
+                }
+            });
+            map.on('click', 'places-layer', function(e) {
+                var properties = e.features[0].properties;
+                new maplibregl.Popup()
+                    .setLngLat(e.lngLat)
+                    .setHTML(
+                        '<strong>' + properties.name + '</strong><br>' +
+                        'Type: ' + properties.type + '<br>' +
+                        'Elevation: ' + properties.elevation + ' ft'
+                    )
+                    .addTo(map);
+            });
+            map.on('mouseenter', 'places-layer', function() {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on('mouseleave', 'places-layer', function() {
+                map.getCanvas().style.cursor = '';
+            });
+        });
+    </script>
+</body>
+</html>
