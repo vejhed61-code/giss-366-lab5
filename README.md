@@ -1,5 +1,5 @@
 # GISS 366 Lab 05
-[update your description here] 
+[This lab presents a collection of five interactive web maps demonstrating different GIS and web-mapping techniques. The maps include a camera view and base map of Norfolk, Virginia; map controls in Atlanta, Georgia; New Mexico data layers; popups featuring four favorite places in New Mexico; and a 3D-buildings map of London.] 
 
 ## Web Map Gallery
 
