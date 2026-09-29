@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>London Calling</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@^6.10.0/dist/maplibre-gl.css" />
+    <style>
+        body { margin: 0; }
+        #map { position: absolute; top: 0; right: 0; bottom: 0; left: 0; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script type="module">
+        import * as maplibregl from 'https://unpkg.com/maplibre-gl@^6.10.0/dist/maplibre-gl.mjs';
+
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: 'https://tiles.openfreemap.org/styles/positron',
+            center: [-0.1276, 51.5074],   // London
+            zoom: 16,
+            pitch: 60,
+            bearing: 25,
+            canvasContextAttributes: { antialias: true }
+        });
+        window.map = map;
+        map.addControl(new maplibregl.NavigationControl({
+            visualizePitch: true
+        }));
+        map.on('load', () => {
+            map.addSource('openfreemap', {
+                type: 'vector',
+                url: 'https://tiles.openfreemap.org/planet'
+            });
+            const layers = map.getStyle().layers;
+            const labelLayerId = layers.find(
+                (layer) => layer.type === 'symbol' && layer.layout && layer.layout['text-field']
+            ).id;
+            map.addLayer({
+                id: '3d-buildings',
+                source: 'openfreemap',
+                'source-layer': 'building',
+                type: 'fill-extrusion',
+                paint: {
+                    'fill-extrusion-height': ['get', 'render_height'],
+                    'fill-extrusion-color': [
+                        'interpolate',
+                        ['linear'],
+                        ['get', 'render_height'],
+                        0, '#d9f0ff',
+                        20, '#74add1',
+                        60, '#4575b4',
+                        150, '#313695'
+                    ]
+                }
+            }, labelLayerId);
+        });
+    </script>
+</body>
+</html>
